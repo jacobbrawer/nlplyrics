@@ -26,7 +26,12 @@ When you click the **Knit** button a document will be generated that includes bo
 
 ```{r cars}
 #Go hens
+#GO HENS
 ```
 
+<<<<<<< HEAD
 Go hens
 >>>>>>> 1bed626e0f751ced52ea7d142740fae81d589a72
+=======
+GO HENS
+>>>>>>> 3c7fba38dbcb1f7a18bfa2d5dd706a253f2f2ba3
