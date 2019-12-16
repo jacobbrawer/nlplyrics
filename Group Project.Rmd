@@ -3,8 +3,8 @@ title: "Group Project"
 author: "Will Abele, Jacob Brawer, Owen Rosebeck"
 date: 'Wednesday, December 18'
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -36,14 +36,13 @@ library(wordcloud2)
 library(tidytext)
 
 songtoken <- songs %>%
-  select(Song.Title, Nouns) %>%
+  select(Nouns) %>%
   unnest_tokens(output = word, input = Nouns)
 
 song_tidy <- songtoken %>% 
   group_by(word) %>%
   count() %>% 
   arrange(desc(n))
-
 
 wordcloud2(data = song_tidy[1:100,], size = 1, color = "RED")
 ```
@@ -64,10 +63,6 @@ songs00 <- songs %>%
 
 songs10 <- songs %>%
   filter(Decade == 10)
-
-
-
-decades <- c(songs70, songs80, songs90, songs00, songs10)
 
 yearlist <- c(1970:2019)
 
@@ -204,7 +199,70 @@ wordcloud2(data = song_tidy10[1:100,], size = 1, color = "RED")
 ggplot(masterwordlist, aes(x = Year, y = n, color = word)) + geom_line()
 
 ```
+```{r}
+library(gplots)
+library(dplyr)
 
+arrangedmasterwordlist <- masterwordlist %>%
+  group_by(word) %>%
+  arrange((Year))
+
+widemasterwordlist <- data.frame(pivot_wider(arrangedmasterwordlist, id_cols = word, names_from = Year, values_from = n))
+row.names(widemasterwordlist) <- widemasterwordlist$word
+masterwordmatrix <- data.matrix(widemasterwordlist[,-1])
+
+wordheatmap <- heatmap(masterwordmatrix, Rowv = NA, Colv = NA, col = heat.colors(256), scale = "column", margins = c(5, 10))
+```
+```{r}
+library(dplyr) #Data manipulation (also included in the tidyverse package)
+library(tidyr) #Spread, separate, unite, text mining (also included in the tidyverse package)
+library(widyr) #Use for pairwise correlation
+
+#Visualizations!
+library(ggplot2) #Visualizations (also included in the tidyverse package)
+library(ggrepel) #`geom_label_repel`
+library(gridExtra) #`grid.arrange()` for multi-graphs
+library(knitr) #Create nicely formatted output tables
+library(kableExtra) #Create nicely formatted output tables
+library(formattable) #For the color_tile function
+library(circlize) #Visualizations - chord diagram
+library(remotes)
+install_github("EmilHvitfeldt/textdata")
+install_github("juliasilge/tidytext")
+library(tidytext) #Text mining
+library(textdata)
+
+# tidytext::sentiment
+# 
+# 
+# afinn <- get_sentiments("afinn")
+# bing <- get_sentiments("bing")
+# nrc <- get_sentiments("nrc")
+# 
+# 
+# view(sentiments)
+# 
+# new_sentiments <- sentiments %>% #From the tidytext package
+#   filter(lexicon != "loughran") %>% #Remove the finance lexicon
+#   mutate( sentiment = ifelse(lexicon == "AFINN" & score >= 0, "positive",
+#                               ifelse(lexicon == "AFINN" & score < 0,
+#                                      "negative", sentiment))) %>%
+#   group_by(lexicon) %>%
+#   mutate(words_in_lexicon = n_distinct(word)) %>%
+#   ungroup()
+# 
+# new_sentiments %>%
+#   group_by(lexicon, sentiment, words_in_lexicon) %>%
+#   summarise(distinct_words = n_distinct(word)) %>%
+#   ungroup() %>%
+#   spread(sentiment, distinct_words) %>%
+#   mutate(lexicon = color_tile("lightblue", "lightblue")(lexicon),
+#          words_in_lexicon = color_bar("lightpink")(words_in_lexicon)) %>%
+#   my_kable_styling(caption = "Word Counts Per Lexicon")
+
+
+
+```
 
 
 
