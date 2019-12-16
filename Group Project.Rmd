@@ -12,7 +12,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+library(tm)
+library(tidyverse)
 songs <- read.csv("prepped_data.csv")
+stopWords <- c("chorus ", "verse ")
 
 songs <- songs %>% 
   select(Album, Artist, Lyrics, Rank, Song.Title, Year, Verbs, Nouns, Adverbs, Word.Counts) %>%
@@ -20,9 +23,9 @@ songs <- songs %>%
   mutate(Verbs = as.character(Verbs)) %>% 
   mutate(Nouns = as.character(Nouns)) %>% 
   mutate(Adverbs = as.character(Adverbs)) %>% 
+  mutate(Nouns = removeWords(Nouns, stopWords)) %>%
   mutate(Decade = ifelse(Year < 1980, 70, ifelse(Year < 1990, 80, ifelse(Year < 2000, 90, ifelse(Year < 2010, 00, 10)))))
 
-view(songs)
 ```
 
 
@@ -40,6 +43,7 @@ song_tidy <- songtoken %>%
   group_by(word) %>%
   count() %>% 
   arrange(desc(n))
+
 
 wordcloud2(data = song_tidy[1:100,], size = 1, color = "RED")
 ```
@@ -61,7 +65,46 @@ songs00 <- songs %>%
 songs10 <- songs %>%
   filter(Decade == 10)
 
+
+
 decades <- c(songs70, songs80, songs90, songs00, songs10)
+
+yearlist <- c(1970:2019)
+
+top10 <- c()
+for(i in c(1:10)){
+  top10 <- c(top10, song_tidy[i, 1])
+}
+
+masterwordlist <- data.frame()
+
+
+for (i in yearlist){
+  
+yearsongtoken <- songs %>%
+  filter(Year == i) %>%
+  select(Nouns) %>%
+  unnest_tokens(output = word, input = Nouns)
+
+year_song_tidy <- yearsongtoken %>% 
+  filter(word == top10[1] | word == top10[2] | word == top10[3] |word == top10[4] |word == top10[5] |word == top10[6] |word == top10[7] |word == top10[8] |word == top10[9] |word == top10[10]) %>%
+  group_by(word) %>%
+  count() %>% 
+  arrange(desc(n)) %>%
+  mutate(Year = i)
+
+if (length(masterwordlist) == 0 ){
+  masterwordlist <- year_song_tidy 
+}else{
+  
+masterwordlist <- merge(year_song_tidy, masterwordlist, all = TRUE)
+  }
+}
+
+```
+
+
+```{r}
 
 songtoken70 <- songs70 %>%
   select(Song.Title, Nouns) %>%
@@ -126,8 +169,39 @@ wordcloud2(data = song_tidy10[1:100,], size = 1, color = "RED")
 
 
 ```
-deciding which words to remove from consideration
+
+
 ```{r}
+# top10 <- c()
+# for(i in c(1:10)){
+#   top10 <- c(top10, song_tidy[i, 1])
+# }
+# 
+# songs70pop <- song_tidy70 %>%
+#   filter(word == top10[1] | word == top10[2] | word == top10[3] |word == top10[4] |word == top10[5] |word == top10[6] |word == top10[7] |word == top10[8] |word == top10[9] |word == top10[10]) %>%
+#   mutate(Decade = 1970)
+# 
+# songs80pop <- song_tidy80 %>%
+#   filter(word == top10[1] | word == top10[2] | word == top10[3] |word == top10[4] |word == top10[5] |word == top10[6] |word == top10[7] |word == top10[8] |word == top10[9] |word == top10[10]) %>%
+#   mutate(Decade = 1980)
+# 
+# songs90pop <- song_tidy90 %>%
+#   filter(word == top10[1] | word == top10[2] | word == top10[3] |word == top10[4] |word == top10[5] |word == top10[6] |word == top10[7] |word == top10[8] |word == top10[9] |word == top10[10]) %>%
+#   mutate(Decade = 1990)
+# 
+# songs00pop <- song_tidy00 %>%
+#   filter(word == top10[1] | word == top10[2] | word == top10[3] |word == top10[4] |word == top10[5] |word == top10[6] |word == top10[7] |word == top10[8] |word == top10[9] |word == top10[10]) %>%
+#   mutate(Decade = 2000)
+# 
+# songs10pop <- song_tidy10 %>%
+#   filter(word == top10[1] | word == top10[2] | word == top10[3] |word == top10[4] |word == top10[5] |word == top10[6] |word == top10[7] |word == top10[8] |word == top10[9] |word == top10[10]) %>%
+#   mutate(Decade = 2010)
+```
+
+
+
+```{r}
+ggplot(masterwordlist, aes(x = Year, y = n, color = word)) + geom_line()
 
 ```
 
