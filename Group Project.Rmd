@@ -11,27 +11,134 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
-<<<<<<< HEAD
 ```{r}
-read.csv("all_songs_data.csv")
+songs <- read.csv("prepped_data.csv")
+
+songs <- songs %>% 
+  select(Album, Artist, Lyrics, Rank, Song.Title, Year, Verbs, Nouns, Adverbs, Word.Counts) %>%
+  mutate(Lyrics = as.character(Lyrics)) %>% 
+  mutate(Verbs = as.character(Verbs)) %>% 
+  mutate(Nouns = as.character(Nouns)) %>% 
+  mutate(Adverbs = as.character(Adverbs)) %>% 
+  mutate(Decade = ifelse(Year < 1980, 70, ifelse(Year < 1990, 80, ifelse(Year < 2000, 90, ifelse(Year < 2010, 00, 10)))))
+
+view(songs)
 ```
 
 
-test
-=======
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+library(tidyverse)
+library(stringr)
+library(wordcloud2)
+library(tidytext)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+songtoken <- songs %>%
+  select(Song.Title, Nouns) %>%
+  unnest_tokens(output = word, input = Nouns)
 
-```{r cars}
-#Go hens
-#GO HENS
+song_tidy <- songtoken %>% 
+  group_by(word) %>%
+  count() %>% 
+  arrange(desc(n))
+
+wordcloud2(data = song_tidy[1:100,], size = 1, color = "RED")
 ```
 
-<<<<<<< HEAD
-Go hens
->>>>>>> 1bed626e0f751ced52ea7d142740fae81d589a72
-=======
-GO HENS
->>>>>>> 3c7fba38dbcb1f7a18bfa2d5dd706a253f2f2ba3
+
+```{r}
+songs70 <- songs %>%
+  filter(Decade == 70)
+
+songs80 <- songs %>%
+  filter(Decade == 80)
+
+songs90 <- songs %>%
+  filter(Decade == 90)
+
+songs00 <- songs %>%
+  filter(Decade == 0)
+
+songs10 <- songs %>%
+  filter(Decade == 10)
+
+decades <- c(songs70, songs80, songs90, songs00, songs10)
+
+songtoken70 <- songs70 %>%
+  select(Song.Title, Nouns) %>%
+  unnest_tokens(output = word, input = Nouns)
+
+song_tidy70 <- songtoken70 %>% 
+  group_by(word) %>%
+  count() %>% 
+  arrange(desc(n))
+
+wordcloud2(data = song_tidy70[1:100,], size = 1, color = "RED")
+
+
+songtoken80 <- songs80 %>%
+  select(Song.Title, Nouns) %>%
+  unnest_tokens(output = word, input = Nouns)
+
+song_tidy80 <- songtoken80 %>% 
+  group_by(word) %>%
+  count() %>% 
+  arrange(desc(n))
+
+wordcloud2(data = song_tidy80[1:100,], size = 1, color = "RED")
+
+
+songtoken90 <- songs90 %>%
+  select(Song.Title, Nouns) %>%
+  unnest_tokens(output = word, input = Nouns)
+
+song_tidy90 <- songtoken90 %>% 
+  group_by(word) %>%
+  count() %>% 
+  arrange(desc(n))
+
+wordcloud2(data = song_tidy90[1:100,], size = 1, color = "RED")
+
+
+
+songtoken00 <- songs00 %>%
+  select(Song.Title, Nouns) %>%
+  unnest_tokens(output = word, input = Nouns)
+
+song_tidy00 <- songtoken00 %>% 
+  group_by(word) %>%
+  count() %>% 
+  arrange(desc(n))
+
+wordcloud2(data = song_tidy00[1:100,], size = 1, color = "RED")
+
+
+
+songtoken10 <- songs10 %>%
+  select(Song.Title, Nouns) %>%
+  unnest_tokens(output = word, input = Nouns)
+
+song_tidy10 <- songtoken10 %>% 
+  group_by(word) %>%
+  count() %>% 
+  arrange(desc(n))
+
+wordcloud2(data = song_tidy10[1:100,], size = 1, color = "RED")
+
+
+```
+deciding which words to remove from consideration
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
