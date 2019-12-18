@@ -7,6 +7,8 @@ output:
   pdf_document: default
 ---
 
+https://prezi.com/view/zYGal9DWEFulQ9FjeTOM/
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 songs2013 <- read.csv("songs2013.csv")
@@ -356,15 +358,6 @@ radar_chart_10s <- song10_nrc %>%
 radar_chart_10s
 ```
 
-```{r}
-curse <- read.delim("facebook-bad-words-list_comma-separated-text-file_2018_07_29.txt")
-cursewords <- unlist(strsplit(as.character(curse[8,1]), ","))
-cursewords <- data.frame(cursewords) %>% 
-  rename(word = cursewords)
-
-song_curse <- song_tidy %>% 
-  inner_join(cursewords)
-```
 
 ```{r}
 my_colors <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00")
@@ -573,8 +566,7 @@ song_tidy10 <- songtoken10 %>%
 
 ```{r}
 
-
-song_noun <- annotation %>% 
+song_noun <- songs %>% 
   dplyr::select(Song.Title, Nouns, Year) %>% 
   unnest_tokens(output = word, input = Nouns) %>% 
   mutate(Upos = "NOUN") %>% 
