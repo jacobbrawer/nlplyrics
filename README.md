@@ -1,4 +1,4 @@
-# team-market
+# team-lyrics
 
 Our group members include: Jacob Brawer, Owen Rosebeck, and Will Abele. The title of our intended project is "Popular Song Lyric Analysis from 1970-2019".
  
