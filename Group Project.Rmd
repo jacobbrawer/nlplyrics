@@ -18,6 +18,7 @@ songs2013 <- na.omit(songs2013)
 ```
 
 
+
 Introduction
 
 One relaxing Friday evening several weeks ago, the three of us sat around a circle table in Frary Dining Hall enjoying a long, pleasant dinner filled with scintillating topics of conversation. As we talked, we eventually began discussing our interests in music, and specifically, which era of music was best. Owen appreciated the ‘80s, Will the 00’s, and Jacob the ‘10s, each for different reasons. Owen claimed the ‘80s was a “fun” and “happy” era of music, partially as a result of its minimal political overtones. Will agreed with Owen’s point, but noted the wide variety of genres in the 2000’s that had not been previously prevalent. Jacob argued that music in the 2010’s has featured the most creativity and experimentation. As any Pomona students would, we determined this Frary argument should be examined under the scope of academic, data-backed research, and our Computational Statistics semester project proved the perfect outlet.
