@@ -39,12 +39,6 @@ songs <- songs %>%
 
 ```
 
-
-```{r}
-write.csv(songs, file = "final_songs.csv")
-```
-
-
 ```{r}
 library(tidyverse)
 library(stringr)
@@ -61,7 +55,7 @@ song_tidy <- songtoken %>%
   count() %>% 
   arrange(desc(n))
 
-wordcloud2(data = song_tidy[1:100,], size = 1, color = "RED")
+wordcloud2(data = song_tidy[1:100,], size = 1, color = "random-light")
 ```
 
 
@@ -182,40 +176,11 @@ wordcloud2(data = song_tidy10[1:100,], size = 1, color = "random-light")
 
 ```
 
-
-```{r}
-# top10 <- c()
-# for(i in c(1:10)){
-#   top10 <- c(top10, song_tidy[i, 1])
-# }
-# 
-# songs70pop <- song_tidy70 %>%
-#   filter(word == top10[1] | word == top10[2] | word == top10[3] |word == top10[4] |word == top10[5] |word == top10[6] |word == top10[7] |word == top10[8] |word == top10[9] |word == top10[10]) %>%
-#   mutate(Decade = 1970)
-# 
-# songs80pop <- song_tidy80 %>%
-#   filter(word == top10[1] | word == top10[2] | word == top10[3] |word == top10[4] |word == top10[5] |word == top10[6] |word == top10[7] |word == top10[8] |word == top10[9] |word == top10[10]) %>%
-#   mutate(Decade = 1980)
-# 
-# songs90pop <- song_tidy90 %>%
-#   filter(word == top10[1] | word == top10[2] | word == top10[3] |word == top10[4] |word == top10[5] |word == top10[6] |word == top10[7] |word == top10[8] |word == top10[9] |word == top10[10]) %>%
-#   mutate(Decade = 1990)
-# 
-# songs00pop <- song_tidy00 %>%
-#   filter(word == top10[1] | word == top10[2] | word == top10[3] |word == top10[4] |word == top10[5] |word == top10[6] |word == top10[7] |word == top10[8] |word == top10[9] |word == top10[10]) %>%
-#   mutate(Decade = 2000)
-# 
-# songs10pop <- song_tidy10 %>%
-#   filter(word == top10[1] | word == top10[2] | word == top10[3] |word == top10[4] |word == top10[5] |word == top10[6] |word == top10[7] |word == top10[8] |word == top10[9] |word == top10[10]) %>%
-#   mutate(Decade = 2010)
-```
-
-
-
 ```{r}
 ggplot(masterwordlist, aes(x = Year, y = n, color = word)) + geom_line()
 
 ```
+
 ```{r}
 library(gplots)
 library(dplyr)
@@ -231,6 +196,7 @@ masterwordmatrix <- data.matrix(widemasterwordlist[,-1])
 
 wordheatmap <- heatmap(masterwordmatrix, Rowv = NA, Colv = NA, col = heat.colors(256), scale = "column", margins = c(5, 10))
 ```
+
 ```{r}
 library(dplyr) #Data manipulation (also included in the tidyverse package)
 library(tidyr) #Spread, separate, unite, text mining (also included in the tidyverse package)
@@ -250,36 +216,9 @@ library(circlize) #Visualizations - chord diagram
 library(tidytext) #Text mining
 library(textdata)
 
-# tidytext::sentiment
-# 
-# 
 afinn <- get_sentiments("afinn")
 bing <- get_sentiments("bing")
 nrc <- get_sentiments("nrc")
-# 
-# 
-# view(sentiments)
-# 
-# new_sentiments <- sentiments %>% #From the tidytext package
-#   filter(lexicon != "loughran") %>% #Remove the finance lexicon
-#   mutate( sentiment = ifelse(lexicon == "AFINN" & score >= 0, "positive",
-#                               ifelse(lexicon == "AFINN" & score < 0,
-#                                      "negative", sentiment))) %>%
-#   group_by(lexicon) %>%
-#   mutate(words_in_lexicon = n_distinct(word)) %>%
-#   ungroup()
-# 
-# new_sentiments %>%
-#   group_by(lexicon, sentiment, words_in_lexicon) %>%
-#   summarise(distinct_words = n_distinct(word)) %>%
-#   ungroup() %>%
-#   spread(sentiment, distinct_words) %>%
-#   mutate(lexicon = color_tile("lightblue", "lightblue")(lexicon),
-#          words_in_lexicon = color_bar("lightpink")(words_in_lexicon)) %>%
-#   my_kable_styling(caption = "Word Counts Per Lexicon")
-
-
-
 ```
 
 ```{r}
@@ -477,8 +416,6 @@ timeless_artists <- songs %>%
 topartist_token <- songs %>%
   mutate(timeless = ifelse(Artist == "Madonna" | Artist == "Elton John" | Artist == "Mariah Carey" | Artist == "Taylor Swift" | Artist == "Chicago" | Artist == "Stevie Wonder" | Artist == "Kelly Clarkson" | Artist == "Michael Jackson" | Artist == "Rihanna" | Artist == "Aerosmith" | Artist == "Daryl Hall and John Oates" | Artist ==	"Drake"	| Artist == "Janet Jackson" | Artist ==	"Beyonce"	| Artist == "Bon Jovi" | Artist == "Celine Dion" | Artist == "Cher" | Artist == "Commodores" | Artist == "Eminem" | Artist == "Eric Clapton" | Artist == "Justin Timberlake" | Artist == "Maroon 5" | Artist == "Olivia Newton-John" | Artist =="Rod Stewart" | Artist =="Usher", "Top Artist", "Total"))
 
- 
-
 tfidf_words_timeless <- topartist_token %>%
   unnest_tokens(word, Lyrics) %>%
   distinct() %>%
@@ -522,29 +459,36 @@ song_compcloud70 <- songtoken70 %>%
   comparison.cloud(colors = c("gray20", "gray80"),
                    max.words = 100)
 
+```
 
+```{r}
 song_tidy80 <- songtoken80 %>% 
   inner_join(bing) %>%
   count(word, sentiment, sort = TRUE) %>%
   acast(word ~ sentiment, value.var = "n", fill = 0) %>%
   comparison.cloud(colors = c("gray20", "gray80"),
                    max.words = 100)
+```
 
-
+```{r}
 song_tidy90 <- songtoken90 %>% 
   inner_join(bing) %>%
   count(word, sentiment, sort = TRUE) %>%
   acast(word ~ sentiment, value.var = "n", fill = 0) %>%
   comparison.cloud(colors = c("gray20", "gray80"),
                    max.words = 100)
+```
 
+```{r}
 song_tidy00 <- songtoken00 %>% 
   inner_join(bing) %>%
   count(word, sentiment, sort = TRUE) %>%
   acast(word ~ sentiment, value.var = "n", fill = 0) %>%
   comparison.cloud(colors = c("gray20", "gray80"),
                    max.words = 100)
+```
 
+```{r}
 song_tidy10 <- songtoken10 %>% 
   inner_join(bing) %>%
   count(word, sentiment, sort = TRUE) %>%
@@ -552,16 +496,49 @@ song_tidy10 <- songtoken10 %>%
   comparison.cloud(colors = c("gray20", "gray80"),
                    max.words = 100)
 
+```
 
+```{r}
+song_bigrams <- songs %>%
+  unnest_tokens(bigram, Corpus, token = "ngrams", n = 2)
+
+bigrams_separated <- song_bigrams %>%
+  separate(bigram, c("word1", "word2"), sep = " ")
+
+bigrams_filtered <- bigrams_separated %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word) %>%
+  filter(nchar(word1) > 2) %>%
+  filter(nchar(word2) > 2)
+ 
+
+bigram_decade <- bigrams_filtered %>%
+  filter(word1 != word2) %>%
+  unite(bigram, word1, word2, sep = " ") %>%
+  count(bigram, Decade, sort = TRUE) %>%
+  group_by(Decade) %>%
+  slice(seq_len(10)) %>%
+  ungroup() %>%
+  arrange(Decade, n) %>%
+  mutate(row = row_number())
 
 ```
 
 ```{r}
-# library(cleanNLP)
-# 
-# cnlp_init_udpipe()
-# 
-# annotation <- songs$Corpus %>% cnlp_annotate()
+ggplot(bigram_decade, aes(x= row, y = n, fill = Decade)) + geom_col(show.legend = FALSE) + facet_wrap(~Decade, scales = "free_y") +
+  xlab(NULL) + ylab(NULL) + scale_x_continuous(breaks = bigram_decade$row, labels = bigram_decade$bigram) + theme(panel.grid.major.x = element_blank()) + ggtitle("Bigrams Per Decade") + coord_flip()
+
+```
+
+```{r}
+library(ggraph)
+
+bigram_decade %>% select(bigram, n) %>%
+  separate(bigram, c("word1", "word2")) %>%
+  ggraph(layout = "fr") +
+  geom_edge_link() +
+  geom_node_point() +
+  geom_node_text(aes(label = name), vjust = 1, hjust = 1)
 ```
 
 ```{r}
@@ -587,37 +564,51 @@ song_adverb <- songs %>%
 song_upos <- rbind(rbind(song_noun,song_verb), song_adverb)
 ```
 
-```{r}
-# annotation_song = annotation$token %>% 
-#   rename(id = doc_id, word = token)
-# 
-# source_tidy <- annotation_song %>%
-#   distinct() %>% 
-#   select(document = id, word, lemma, upos) %>%
-#   filter(upos == "NOUN") %>% #choose only the nouns
-#   inner_join(song_noun, by = c("word")) %>%
-#   select(document, word, lemma, upos)
-# 
-# source_dtm <- source_tidy %>%
-#   #filter out some words that exist across themes just for our purposes
-#   filter(!word %in% c("love", "time", "day", "night", "girl")) %>%
-#   count(document, word, sort = TRUE) %>%
-#   ungroup() %>%
-#   cast_dtm(document, word, n)
 
-# k <- 7
-# num_words <- 6
-# seed = 4321
-# lda <- LDA(source_dtm, k = k, method = "GIBBS",
-# 
-# control = list(seed = seed))
-# 
-# top_terms_per_topic(lda, num_words)
-```
 ```{r}
-# library(topicmodels)
-# data("AssociatedPress", package = "topicmodels")
-# AssociatedPress$dimnames$Docs
 
-```
+t1 <- c("woah", "kiss", "life", "thing", "world", "song", "people") 
+
+t2 <- c("tonight", "dance", "party", "hand", "thing")
+
+t3 <- c("friend", "head", "woman", "lover", "lady", "ladies")
+
+t4 <- c("shit", "bitch", "bottom", "water", "pussi", "pussy")
+
+t5 <- c("money", "bodies", "type", "bitch", "cash", "body")
+
+t6 <- c("name", "chance", "town", "rain", "tear")
+
+t7 <- c("gang", "taste", "girlfriend", "wrist", "chain") 
+
+t8 <- c("thunder", "star", "murder", "ghost", "wish")
+
+topic_modeling <- function(topic, color, title){
+
+  topic_plot <-  song_upos %>%
+  filter(word %in% topic) %>%
+  group_by(Year) %>%
+  mutate(topic_count = n()) %>%
+  select(Year, topic_count) %>%
+  distinct() %>%
+  ggplot(aes(Year, topic_count)) + geom_smooth(se = FALSE, col = color) + ggtitle(title)
   
+  topic_plot
+  
+}
+
+colors <- c("#89C5DA", "#DA5724", "#74D944", "#CE50CA", "#3F4921", "#C0717C", "#CBD588", "#5F7FC7", 
+"#673770", "#D3D93E", "#38333E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD", 
+"#D14285", "#6DDE88", "#652926", "#7FDCC0", "#C84248", "#8569D5", "#5E738F", "#D1A33D", 
+"#8A7C64", "#599861")
+
+topic_modeling(t1, sample(colors, 1), "Passion/Longing")
+topic_modeling(t2, sample(colors, 1), "Party/Dance/Movement")
+topic_modeling(t3, sample(colors, 1), "Intimacy/Women")
+topic_modeling(t4, sample(colors, 1), "Sex/Objectification")
+topic_modeling(t5, sample(colors, 1), "Measurements of Clout")
+topic_modeling(t6, sample(colors, 1), "Impulsivity/Sadness")
+topic_modeling(t7, sample(colors, 1), "Commitment/Tether")
+topic_modeling(t8, sample(colors, 1), "Faith/Violence")
+```
+
