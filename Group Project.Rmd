@@ -3,7 +3,9 @@ title: "Group Project"
 author: "Will Abele, Jacob Brawer, Owen Rosebeck"
 date: 'Wednesday, December 18'
 output:
-  html_document: default
+  html_document:
+    toc: true
+    number_sections: true
   pdf_document: default
 ---
 
@@ -19,7 +21,7 @@ songs2013 <- na.omit(songs2013)
 
 
 
-Introduction
+# Introduction
 
 One relaxing Friday evening several weeks ago, the three of us sat around a circle table in Frary Dining Hall enjoying a long, pleasant dinner filled with scintillating topics of conversation. As we talked, we eventually began discussing our interests in music, and specifically, which era of music was best. Owen appreciated the ‘80s, Will the 00’s, and Jacob the ‘10s, each for different reasons. Owen claimed the ‘80s was a “fun” and “happy” era of music, partially as a result of its minimal political overtones. Will agreed with Owen’s point, but noted the wide variety of genres in the 2000’s that had not been previously prevalent. Jacob argued that music in the 2010’s has featured the most creativity and experimentation. As any Pomona students would, we determined this Frary argument should be examined under the scope of academic, data-backed research, and our Computational Statistics semester project proved the perfect outlet.
 
@@ -119,7 +121,7 @@ radar_chart_10s
 ```
 
 
-Project Goals and General Methods
+# Project Goals and General Methods
 
 Of course, music preferences are subjective, and thus it is impossible to determine the “best” era of music. That said, characterizing a time period’s ideas and sentiments can be done fairly objectively through analyzing that time period’s music, and more specifically, the language and lyrics used in the songs of each era. Song lyrics are a key identifier when it comes to determining song popularity (Berger, 2018), and they provide an opportunity for rich analyses of their associated time period. 
 
@@ -128,7 +130,7 @@ Hence, our group’s goal is to analyze (popular) song lyrics in the yearly Bill
 In order to allocate, clean, wrangle, merge, and visualize the data, we used a variety of different packages in both Python (regular expressions, BeautifulSoup, requests, spacy, etc.) and R (tidytext, tidyr, dplyr, ggplot, wordcloud2, etc.) and heavily relied on the python based Genius API.
 
 
-Data
+# Data
 
 We originally had planned to use two datasets. One was from DataWorlds, provided by Sean Miller, and featured 50,000 Billboard top 100 songs, compiled every week from 1960-2019. The other was the Metrolyrics’s 300,000+ song lyrics dataset from kaggle. We wanted to merge these data sets by song, which proved to be a rather daunting task, due to a number of factors. Despite 300,000 songs being a large amount, there was not nearly as much overlap with the 50,000 Billboard songs as we expected. Additionally, there were a number of string-related differences that would’ve been very time consuming to standardize, stemming from differences in handling featured artists (sometimes in the Artist’s column, sometimes in the Song Title column, and with different characters to demonstrate connection such as “feat., ft., x, &, featuring” and even both artists names listed without any formal union. 
  
@@ -141,7 +143,7 @@ After all this work, our final data-set was complete! A data-frame including Son
 ![Final Data Frame](data.png)
 
 
-Procedure
+# Procedure
 
 After completing our dataset, next steps involved pre-processing our lyrics for easier manipulation in R and inputting our natural language processing pipeline. The Python code for the process below can be found in the appendix. 
 
@@ -150,11 +152,11 @@ We began using the spacy package in Python on the raw lyrics-- this process invo
 Our analysis included metrics of word frequency (by part of speech and decade), sentiment analysis, lexical diversity and density, bigrams, term frequency - inverse document frequency (TF-IDF) importance analysis, and latent dirichlet allocation (LDA). Our visualization tools included wordclouds, heatmaps, radar charts, bar-graphs, and smooth line plots over time.
 
 
-Results and Findings
+# Results and Findings
 [Please be aware that crude language is included in this analysis]
 
 
-Word Clouds
+## Word Clouds
 
 Word Clouds are designed to visualize the words appearing with the highest frequency. We believe that this visualization best displays the most commonly used words in our song lyrics dataset on a total and per-decade basis and are useful in determining broad changes in lyrical language over time. In order to create this visualization, we first create the ‘Corpus’ column of our data, which removes meaningless words like articles and prepositions, in order to better highlight the more impactful words (nouns, verbs, and adjectives) of songs. We then tokenize (break up by word) our existing song data to only consider each “Corpus” word and the number of times that word appears in our fifty-year time period. We create an initial word cloud reflecting the top ten popular words of all-time. 
 
@@ -231,6 +233,7 @@ masterwordlist <- merge(year_song_tidy, masterwordlist, all = TRUE)
   }
 }
 ```
+
 ```{r, echo=FALSE, message=FALSE}
 
 songtoken70 <- songs70 %>%
@@ -295,7 +298,7 @@ song_tidy10 <- songtoken10 %>%
 wordcloud2(data = song_tidy10[1:100,], size = 1, color = "random-light")
 ```
 
-##Top 10 Words and Heat Map
+## Top 10 Words and Heat Map
 
 To see whether artists’ popular language change across the decades, we plot the top ten most commonly used words from 1970 to 2019. To build the plot, we examine our complete tokenized word list to determine the ten most-used words over the past fifty years. We then count the instances in which those words were used in each distinct year and plot the results as a line graph below. 
 
@@ -347,7 +350,7 @@ nrc <- get_sentiments("nrc")
 ```
 
 
-Sentiment Radar Graph By Decade
+## Sentiment Radar Graph By Decade
 
 To gain a deeper understanding of how general musical moods have changed over time, we run a sentiment analysis on our song lyrics over the past five decades. In carrying out this analysis, we note that oftentimes a singular word lacks requisite context to provide a proper analysis of its usage. So, we use a method that aggregates the sentiments of all words in a decade to better discover overall themes. 
 
@@ -446,11 +449,11 @@ radar_chart_10s
 ```
 
 
-Positive and Negative Word Clouds
+## Positive and Negative Word Clouds
 
 To further explore and verify what was leading to the rise in anger, fear, disgust and sadness in the twenty-first century, we continue our sentiment analysis to observe how positively and negatively-rated words change over the decades. Through word cloud visualization, we can see which negative words contribute most to the rise in negative sentiment in the 2000s and 2010s. 
 
-We use the ‘tidytext’ package as before, but this time decide to use the “bing” sentiment analysis (puts words into two buckets: positive or negative) method instead of NRC (puts words into ten buckets as listed above) and additionally use the ‘wordcloud2’ package to plot the resulting word clouds. As shown below, the word clouds are separated in half, with positive words on the lower half and negative words on the upper half. The first plot is for the 1970s, the second for the 2010s.
+We use the ‘tidytext’ package as before, but this time decide to use the “bing” sentiment analysis (puts words into two buckets: positive or negative) method instead of NRC (puts words into ten buckets as listed above) and additionally use the ‘wordcloud2’ package to plot the resulting word clouds. As shown below, the word clouds are separated in half, with positive words on the lower half and negative words on the upper half. The first plot is for the 1970s, the second for the 2010s. In the Appendix, we plot each decade.
 
 
 ```{r, echo=FALSE, message=FALSE}
@@ -508,7 +511,7 @@ song_tidy10 <- songtoken10 %>%
 “Love” is prominently displayed in the middle of all word clouds, once again emphasizing its importance. As expected, we see a rise of profanity, aggression, and other offensive terms (which classify as negative sentiment) in the 2000s and 2010s, contributing to the previously noticed sentiments of anger, sadness, and disgust. Possible reasons for such agitation could include the dawn and duration of a war from 2001 to 2011, the bursting of the tech bubble in the early 2000s, the mortgage meltdown financial crisis of 2008, and political polarization in the 2010s.
 
 
-Lexical Diversity By Year
+## Lexical Diversity By Year
 
 Lexical diversity describes the use of unique words over time. “Unique” words are defined as the number of distinct words, across all songs, in a given time frame (each decade, for our case). The visualization below communicates how the complexity of song lyrics have changed over time, i.e., with more unique words comes more song lyric complexity. From our sentiment analysis radar charts above, we recall that the moods of songs has grown more complex (the red area of the radar charts has grown). Therefore, we expect to see an overall increase in lexical diversity. It would make sense that the more complex lyrics are, the more moods and sentiments they communicate. Again, we use our tokenized word list and simply count the number of words used each year by counting the number of rows per year. We then plot these results over time. 
 
@@ -558,7 +561,7 @@ diversity_plot
 We see a slight upward trend in lexicon diversity, meaning song lyrics have grown more complex over the past fifty years, in terms of the number of unique words in a given decade. This is consistent with our sentiment analysis findings.
 
 
-Lexical Density By Year
+## Lexical Density By Year
 
 Lexical density, the ratio of unique words to total words in a given time period, pairs well with lexical diversity. Lexical density analysis allows us to observe lyrical complexity as before, but now we look at lyrical complexity in comparison to the total number of words used (across all songs) per year. Again, we find the number of unique words per year by counting the number of rows in each respective year, then divide by the total count (n) of the sum of all of those words. 
 
@@ -598,7 +601,7 @@ density_plot
 The results yield a downward trend, indicating that the number of total words used in songs has increased even more drastically than the number of unique words has increased over time, implying that songs have become more verbose. Since the increase in the number of total song words outweighs the increase in the number of unique words, we believe songs have also become more repetitive over time.
 
 
-Word Importance By Decade and Bigram Map
+## Word Importance By Decade and Bigram Map
 
 One major goal of this project is to see what lyrics make a song popular. In addition to the analyses above, we can also determine what words are most “important” to various songs in the Top 100 by answering the question: given a song in the Top 100, which words occur most in that song? To answer this question, we use a Term Frequency - Inverse Document Frequency (TF-IDF) methodology to rank words in terms of “importance.” 
 
@@ -695,7 +698,7 @@ Even when using bigrams, the nuances of language are not always well-displayed. 
 In an attempt to characterize the lyrical choices of what we deemed “top artists,” we isolated the 25 artists who have the most multi-year (and even multi-decade) occurrences of music across Billboards. We then aimed to examine their lexicon and see if there are any distinguishing features that could point to their success as musicians. However, despite attempts to model their top words, most important words, and most important bigrams compared to the global array of artists, we could not find any discernible differences between the corpuses used and could draw no serious conclusions for the visualizations we created (see appendix).
 
 
-Latent Dirichlet Allocation and Time-Course Plots
+## Latent Dirichlet Allocation and Time-Course Plots
 
 Latent Dirichlet Allocation (LDA) is a probabilistic model used in Natural Language Processing that relies on unsupervised learning to group words into a pre-set number of clusters based on “relatedness.” The goal of this analysis is to group terms that commonly co-occur in songs into topics, which can be thoughtfully assessed more holistically with a human eye in order to draw meaning from the remote associations of words. We did the following for nouns, verbs, and adverbs.
 
@@ -830,7 +833,7 @@ These results parallel those of our sentiment analysis, which find high levels o
 
 
 
-Work Limitations
+# Work Limitations
 
 Our findings are indubitably interesting, yet we are also excited about a few potential next steps. First, connotations of words in the English language have certainly changed over the past fifty years. For example, “sick” only started meaning “cool” around the mid-1980s as a result of West Coast skate/surf culture. Thus, the word “sick” could have both a positive (if it means “cool”) and a negative (if it means “ill”) sentiment in songs after the mid-1980s. Creating sentiment analysis data by decade and comparing to song lyrics by decade would alleviate a good portion of this issue. Our current sentiment analysis charts above show a fairly significant increase in anger, disgust, and sadness from the early 2000s to the present, mainly due to an increase in profane, negative, and aggressive words. While this increase in negative sentiment could be reflective of the general economic and political agitation of the 2000s and 2010s, it could also be the case that the use of profanity and such aggressive language is more common and socially acceptable now than it was in the late twentieth century. Therefore, breaking down sentiment by decade would provide interesting and more accurate analyses of the respective decade sentiments.
 
@@ -839,14 +842,14 @@ Second, we would like to use song lyrics to classify songs by genre. For example
 Lastly, it would be interesting to gather a larger dataset of songs in and out of the Billboard Top 100 to analyze the differences between charted (Top 100) and uncharted (not Top 100) songs. Opposite our analysis above, perhaps there are certain words used in songs that significantly prevent a song from being in the Top 100. We could also use rankings of the charted songs to interpret word differences between songs in the top and bottom quartiles.
 
 
-Ethical Considerations
+# Ethical Considerations
 
 We encountered certain ethical considerations almost immediately in our research and results. As seen above, some of the most popular song lyric words over the years are profane and can certainly be deemed offensive. For example, words like the n-word and a derogatory term used to describe women have become increasingly popular over time in song lyrics, and would appear in our word cloud. As a group, we found it difficult to draw an exact line for which of these kinds of words to keep and which to exclude. Ultimately, we decided that since profanity and similarly offensive words are useful in identifying sentiment and therefore helpful to our study, we would include such words in our results, but not without a warning of such occurrences.
 
 In addition, our group recognizes that Billboard calculates its “Top 100” songs based on the sales, radio play, and online streaming rankings of all songs (Billboard, 2018). As a result, these Top 100 popularity charts are indicative mostly of the song preferences of a portion of the population that is able to spend the time and money to purchase and listen to these songs. As a result, while we can certainly communicate interesting findings of song lyric popularity over time, we must be careful when generalizing to the population, since there exist less privileged groups whose preferences may not be reflected in the Top 100.
 
 
-Conclusion
+# Conclusion
 
 Overall, popular song lyrics over the past fifty years are able to tell so much beyond just what makes a song popular. We were able to make conclusions and advanced analyses about popular words, significant sentiments, song complexity, and related concepts and topics over time. Our group really enjoyed working together on this project and remains ambitious to explore our next steps!
 
@@ -854,10 +857,11 @@ Overall, popular song lyrics over the past fifty years are able to tell so much 
 
 
 
-APPENDIX
+# Appendix
 
 
-Data Acquisition and Cleaning
+## Data Acquisition and Cleaning
+
 ```{r, echo=FALSE, message=FALSE}
 library(reticulate)
 ```
@@ -892,7 +896,7 @@ import pickle
 import json
 ```
 
-```{r, eval=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
 def collect_songs_from_billboard(start_year,end_year):
     '''This function takes in a start year and and end year, then iterates through each year to 
     pull song data from billboard or bobborst as needed. Then it uses beautiful soup to clean
@@ -1160,7 +1164,7 @@ characteristics = prepared_songs_dataset.groupby('Year').count()
 
 ```
 
-```{python, eval = FALSE, message=FALSE}
+```{python, echo=TRUE, eval = FALSE, message=FALSE}
 import pandas as pd
 import numpy as np
 import requests
@@ -1245,7 +1249,72 @@ lda_results = [(0, '0.136*"heart" + 0.025*"dream" + 0.021*"fire" + 0.018*"woah" 
 ```
 
 
-Word Importance By Timeless Artists
+## Positive / Negative Sentiment Word Clouds By Decade
+
+1970
+
+```{r, echo=FALSE, message=FALSE}
+library(reshape2)
+library(wordcloud)
+
+
+song_compcloud70 <- songtoken70 %>% 
+  inner_join(bing) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("gray20", "gray80"),
+                   max.words = 100)
+
+```
+
+1980
+
+```{r, echo=FALSE, message=FALSE}
+song_tidy80 <- songtoken80 %>% 
+  inner_join(bing) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("gray20", "gray80"),
+                   max.words = 100)
+```
+
+1990
+
+```{r, echo=FALSE, message=FALSE}
+song_tidy90 <- songtoken90 %>% 
+  inner_join(bing) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("gray20", "gray80"),
+                   max.words = 100)
+```
+
+2000
+
+```{r, echo=FALSE, message=FALSE}
+song_tidy00 <- songtoken00 %>% 
+  inner_join(bing) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("gray20", "gray80"),
+                   max.words = 100)
+```
+
+2010
+
+```{r, echo=FALSE, message=FALSE}
+song_tidy10 <- songtoken10 %>% 
+  inner_join(bing) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("gray20", "gray80"),
+                   max.words = 100)
+
+```
+
+
+
+## Word Importance By Timeless Artists
 
 Timeless artists, according to the data, included performers such as Taylor Swift, Michael Jackson, Elton John, Cher, Mariah Carey, etc.
 
@@ -1296,7 +1365,7 @@ top_tfidf_words_timeless %>%
 
 
 
-CITATIONS
+# CITATIONS
 
 Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2019). dplyr: A Grammar of Data Manipulation. R package version 0.8.3. https://CRAN.R-project.org/package=dplyr
 
