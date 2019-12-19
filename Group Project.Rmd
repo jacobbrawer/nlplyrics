@@ -1,5 +1,5 @@
 ---
-title: "Group Project"
+title: "Popular Song Lyric Analysis from 1970-2019"
 author: "Will Abele, Jacob Brawer, Owen Rosebeck"
 date: 'Wednesday, December 18'
 output:
@@ -178,7 +178,9 @@ song_tidy <- songtoken %>%
   group_by(word) %>%
   count() %>% 
   arrange(desc(n))
+```
 
+```{r, echo=FALSE}
 wordcloud2(data = song_tidy[1:100,], size = 1, color = "random-light")
 ```
 
@@ -322,7 +324,7 @@ arrangedmasterwordlist <- masterwordlist %>%
   arrange((Year))
 ```
 
-```{r, message=FALSE}
+```{r, echo=TRUE, message=FALSE}
 widemasterwordlist <- data.frame(pivot_wider(arrangedmasterwordlist, id_cols = word, names_from = Year, values_from = n))
 row.names(widemasterwordlist) <- widemasterwordlist$word
 masterwordmatrix <- data.matrix(widemasterwordlist[,-1])
@@ -530,7 +532,7 @@ theme_lyrics <- function()
 }
 ```
 
-```{r, message=FALSE}
+```{r, echo=TRUE,message=FALSE}
 lex_diversity_per_year <- songs %>%
   unnest_tokens(word, Lyrics) %>%
   group_by(Song.Title,Year) %>%
@@ -566,7 +568,7 @@ We see a slight upward trend in lexicon diversity, meaning song lyrics have grow
 Lexical density, the ratio of unique words to total words in a given time period, pairs well with lexical diversity. Lexical density analysis allows us to observe lyrical complexity as before, but now we look at lyrical complexity in comparison to the total number of words used (across all songs) per year. Again, we find the number of unique words per year by counting the number of rows in each respective year, then divide by the total count (n) of the sum of all of those words. 
 
 
-```{r, message=FALSE}
+```{r, echo=TRUE, message=FALSE}
 lex_density_per_year <- songs %>%
   unnest_tokens(word, Lyrics) %>%
   group_by(Song.Title,Year) %>%
@@ -644,7 +646,7 @@ top_tfidf_words_decade %>%
 
 As alluded to above, looking at singular word importance does not provide relevant information for our analysis due to the complexity of language and ambiguous contextualization of words. So, we decided to create bigrams (pairs of words) to help contextualize some of the lyrical language.  Once again, we use the R package ‘tidytext’, and we tokenize the lyrics pairwise instead of singularly. In the following visualizations, we see that “love” is prominent in the first three decades considered, paired with multiple other words such as “baby” and “fall.” 
 
-```{r, message=FALSE}
+```{r, echo=TRUE, message=FALSE}
 song_bigrams <- songs %>%
   unnest_tokens(bigram, Corpus, token = "ngrams", n = 2)
 
@@ -702,7 +704,7 @@ In an attempt to characterize the lyrical choices of what we deemed “top artis
 
 Latent Dirichlet Allocation (LDA) is a probabilistic model used in Natural Language Processing that relies on unsupervised learning to group words into a pre-set number of clusters based on “relatedness.” The goal of this analysis is to group terms that commonly co-occur in songs into topics, which can be thoughtfully assessed more holistically with a human eye in order to draw meaning from the remote associations of words. We did the following for nouns, verbs, and adverbs.
 
-```{r, message=FALSE}
+```{r, echo=TRUE, message=FALSE}
 song_noun <- songs %>% 
   dplyr::select(Song.Title, Nouns, Year) %>% 
   unnest_tokens(output = word, input = Nouns) %>% 
@@ -712,11 +714,11 @@ song_noun <- songs %>%
 
 We then created a "part of speech" placeholder that binded the three.
 
-The algorithm first assigns words to a random topic and then it iteratively reassigns each word to a new topic and calculates the probability that a word belongs to a given topic and also the probability that the document (in our case a song) could be classified to a particular topic (Lettier 2018). In order to formulate our document-term matrix, the necessary input to an LDA model, which includes rows that are our documents (songs) and columns that are each word in a corpus, we turn to Python’s ‘gensim’ and ‘nltk’ packag, in order to tokenize and “stem” each word within each song. Stemming removes prefixes and suffixes from words that have the same base in order for them to be matched within and between songs. 
+The algorithm first assigns words to a random topic and then it iteratively reassigns each word to a new topic and calculates the probability that a word belongs to a given topic and also the probability that the document (in our case a song) could be classified to a particular topic (Lettier 2018). In order to formulate our document-term matrix, the necessary input to an LDA model, which includes rows that are our documents (songs) and columns that are each word in a corpus, we turn to Python’s ‘gensim’ and ‘nltk’ packages, in order to tokenize and “stem” each word within each song. Stemming removes prefixes and suffixes from words that have the same base in order for them to be matched within and between songs. 
 
 From here, we are able to run the LDA model for a variety of different numbers of topics and numbers of words per topic. We eventually decide on a final number of topics: eight, with five terms per topic. Although there are ways to “optimize” the number of topics, we thought that manually evaluating the success by making sense of the words included in each topic was a better way of approaching our algorithmic selection. (We also attempted to use LDA modeling by decade but saw less success.) The below is code within our topic modeling function, which is a function that arranges topics (like passion) by words that are associated with that topic.
 
-```{r, eval=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
 topic_plot <-  song_upos %>%
   filter(word %in% topic) %>%
   group_by(Year) %>%
@@ -1164,7 +1166,7 @@ characteristics = prepared_songs_dataset.groupby('Year').count()
 
 ```
 
-```{python, echo=TRUE, eval = FALSE, message=FALSE}
+```{python, echo=FALSE, eval = FALSE, message=FALSE}
 import pandas as pd
 import numpy as np
 import requests
@@ -1196,8 +1198,9 @@ from stop_words import get_stop_words
 from nltk.stem.porter import PorterStemmer
 from gensim import corpora, models
 import gensim
+```
 
-
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
 final_songs = pd.read_csv("final_songs.csv", index_col=0)
 
 tokenizer = RegexpTokenizer(r'\w+')
